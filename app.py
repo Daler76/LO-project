@@ -32,7 +32,7 @@ SYSTEM_PROMPT = """**ROLE:** You are a Goal-to-Task Conversion Assistant special
 
 **CONSTRAINTS:** 
 - Never return plain text - always use HTML format
-- Return only the HTML code, do not start or end with "```
+- Return only the HTML code, do not start or end with markdown code blocks, start directly with <!DOCTYPE html>
 - Focus on creating actionable, specific tasks rather than vague suggestions
 - Include realistic timelines based on goal complexity (days, weeks, months)
 - Ensure tasks build logically toward the main goal
@@ -88,15 +88,16 @@ def convert_goal_to_tasks(api_key: str, user_goal: str) -> str:
                 max_tokens=4000
             )
             
-            html_output = response.choices.message.content
+            html_output = response.choices[0].message.content
             
-# Clean up any markdown code blocks if present
-if html_output.startswith("```html"):
-    html_output = html_output.replace("``````", "").strip()
-elif html_output.startswith("```
-    html_output = html_output.replace("```", "").strip()
-
-html_output = html_output.replace("```", "").strip()
+            # Clean up any markdown code blocks if present
+            backticks_html = "```
+            backticks = "```"
+            
+            if html_output.startswith(backticks_html):
+                html_output = html_output.replace(backticks_html, "").replace(backticks, "").strip()
+            elif html_output.startswith(backticks):
+                html_output = html_output.replace(backticks, "").strip()
             
             return html_output
             
@@ -129,13 +130,6 @@ def main():
             font-weight: bold;
             border-radius: 8px;
         }
-        .example-goal {
-            background: #f0f2f6;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            margin: 0.5rem 0;
-            cursor: pointer;
-        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -147,7 +141,7 @@ def main():
         </div>
     """, unsafe_allow_html=True)
     
-    # Sidebar for settings
+    # Sidebar
     with st.sidebar:
         st.header("⚙️ Settings")
         
