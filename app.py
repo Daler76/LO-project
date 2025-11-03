@@ -90,11 +90,13 @@ def convert_goal_to_tasks(api_key: str, user_goal: str) -> str:
             
             html_output = response.choices.message.content
             
-            # Clean up any markdown code blocks if present
-            if html_output.startswith("```html"):
-                html_output = html_output.replace("``````", "").strip()
-            elif html_output.startswith("```
-                html_output = html_output.replace("```", "").strip()
+# Clean up any markdown code blocks if present
+if html_output.startswith("```html"):
+    html_output = html_output.replace("``````", "").strip()
+elif html_output.startswith("```
+    html_output = html_output.replace("```", "").strip()
+
+html_output = html_output.replace("```", "").strip()
             
             return html_output
             
