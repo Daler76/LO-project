@@ -6,7 +6,6 @@ Web application that converts user goals into actionable HTML task breakdowns
 import streamlit as st
 from openai import OpenAI
 from datetime import datetime
-import os
 
 # Page configuration
 st.set_page_config(
@@ -33,7 +32,7 @@ SYSTEM_PROMPT = """**ROLE:** You are a Goal-to-Task Conversion Assistant special
 
 **CONSTRAINTS:** 
 - Never return plain text - always use HTML format
-- Return only the HTML code, do not start or end with "```html" but with <!DOCTYPE html>
+- Return only the HTML code, do not start or end with "```
 - Focus on creating actionable, specific tasks rather than vague suggestions
 - Include realistic timelines based on goal complexity (days, weeks, months)
 - Ensure tasks build logically toward the main goal
@@ -63,18 +62,6 @@ SYSTEM_PROMPT = """**ROLE:** You are a Goal-to-Task Conversion Assistant special
 **CAPABILITIES & REMINDERS:** You can break down complex goals into manageable phases (typically 3-5 phases), suggest realistic timelines, prioritize tasks by importance and dependencies. Always structure tasks logically from initial planning through execution and completion. Make the HTML visually appealing and professional."""
 
 
-#def get_api_key():
-#    """Get API key from environment variable or user input"""
-    # Try to get from environment variable (for deployment)
-#    api_key = os.getenv("OPENAI_API_KEY")
-    
-  #  if not api_key:
-        # If not in environment, check session state
-   #     if "api_key" in st.session_state and st.session_state.api_key:
-     #       api_key = st.session_state.api_key
-    
-  #  return api_key
-
 def get_api_key():
     """Get API key from Streamlit secrets"""
     try:
@@ -101,12 +88,12 @@ def convert_goal_to_tasks(api_key: str, user_goal: str) -> str:
                 max_tokens=4000
             )
             
-            html_output = response.choices[0].message.content
+            html_output = response.choices.message.content
             
             # Clean up any markdown code blocks if present
             if html_output.startswith("```html"):
-                html_output = html_output.replace("```html", "").replace("```", "").strip()
-            elif html_output.startswith("```"):
+                html_output = html_output.replace("``````", "").strip()
+            elif html_output.startswith("```
                 html_output = html_output.replace("```", "").strip()
             
             return html_output
@@ -158,42 +145,21 @@ def main():
         </div>
     """, unsafe_allow_html=True)
     
-    # Sidebar for API key and settings
+    # Sidebar for settings
     with st.sidebar:
         st.header("⚙️ Settings")
-        
-        # API Key input
-        api_key_input = st.text_input(
-            "OpenAI API Key",
-            type="password",
-            value=st.session_state.get("api_key", ""),
-            help="Enter your OpenAI API key. Get one at https://platform.openai.com/api-keys"
-        )
-        
-        if api_key_input:
-            st.session_state.api_key = api_key_input
-        
-        st.markdown("---")
         
         # About section
         st.header("ℹ️ About")
         st.markdown("""
-         This app uses OpenAI's GPT-4 to break down your goals into:
-          - 3-5 manageable phases
-          - Specific actionable tasks
-          - Realistic timelines
-          - Beautiful HTML output
-
+        This app uses OpenAI's GPT-4 to break down your goals into:
+        - 3-5 manageable phases
+        - Specific actionable tasks
+        - Realistic timelines
+        - Beautiful HTML output
+        
         🔒 API key is securely managed via Streamlit secrets.
         """)
-
-       # st.markdown("""
-     #   This app uses OpenAI's GPT-4 to break down your goals into:
-     #   - 3-5 manageable phases
-    #    - Specific actionable tasks
-    #    - Realistic timelines
-     #   - Beautiful HTML output
-     #   """)
         
         st.markdown("---")
         
@@ -252,12 +218,8 @@ def main():
     if generate_clicked:
         api_key = get_api_key()
         
-       # if not api_key:
-        #    st.error("⚠️ Please enter your OpenAI API key in the sidebar!")
-        #    st.info("Get your API key at: https://platform.openai.com/api-keys")
-    if not api_key:
-        st.error("⚠️ API key configuration error. Please contact the app administrator.")
-
+        if not api_key:
+            st.error("⚠️ API key configuration error. Please contact the app administrator.")
         elif not user_goal.strip():
             st.warning("⚠️ Please enter a goal!")
         else:
@@ -306,7 +268,7 @@ def main():
     st.markdown("""
         <div style="text-align: center; color: #666; padding: 2rem 0;">
             <p>Made with ❤️ using OpenAI GPT-4 and Streamlit</p>
-            <p>🔒 Your API key is never stored. All processing happens in your session.</p>
+            <p>🔒 Your API key is securely managed and never exposed to users.</p>
         </div>
     """, unsafe_allow_html=True)
 
