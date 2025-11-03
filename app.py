@@ -63,17 +63,26 @@ SYSTEM_PROMPT = """**ROLE:** You are a Goal-to-Task Conversion Assistant special
 **CAPABILITIES & REMINDERS:** You can break down complex goals into manageable phases (typically 3-5 phases), suggest realistic timelines, prioritize tasks by importance and dependencies. Always structure tasks logically from initial planning through execution and completion. Make the HTML visually appealing and professional."""
 
 
-def get_api_key():
+#def get_api_key():
     """Get API key from environment variable or user input"""
     # Try to get from environment variable (for deployment)
     api_key = os.getenv("OPENAI_API_KEY")
     
-    if not api_key:
+  #  if not api_key:
         # If not in environment, check session state
         if "api_key" in st.session_state and st.session_state.api_key:
             api_key = st.session_state.api_key
     
-    return api_key
+  #  return api_key
+
+def get_api_key():
+    """Get API key from Streamlit secrets"""
+    try:
+        return st.secrets["OPENAI_API_KEY"]
+    except (KeyError, FileNotFoundError):
+        st.error("⚠️ OpenAI API key not found in secrets!")
+        st.info("Please configure OPENAI_API_KEY in your Streamlit Cloud secrets settings.")
+        return None
 
 
 def convert_goal_to_tasks(api_key: str, user_goal: str) -> str:
