@@ -32,7 +32,7 @@ SYSTEM_PROMPT = """**ROLE:** You are a Goal-to-Task Conversion Assistant special
 
 **CONSTRAINTS:** 
 - Never return plain text - always use HTML format
-- Return only the HTML code, do not start or end with markdown code blocks, start directly with <!DOCTYPE html>
+- Return only the HTML code without markdown code blocks, start directly with <!DOCTYPE html>
 - Focus on creating actionable, specific tasks rather than vague suggestions
 - Include realistic timelines based on goal complexity (days, weeks, months)
 - Ensure tasks build logically toward the main goal
@@ -91,13 +91,17 @@ def convert_goal_to_tasks(api_key: str, user_goal: str) -> str:
             html_output = response.choices[0].message.content
             
             # Clean up any markdown code blocks if present
-            if html_output.startswith('```html'):
-                html_output = html_output.replace('``````', '').strip()
-            elif html_output.startswith('```
-                html_output = html_output.replace('```', '').strip()
+            # Using chr(96) for backtick to avoid syntax issues
+            tick = chr(96)
+            html_marker = tick + tick + tick + "html"
+            code_marker = tick + tick + tick
+            
+            if html_output.startswith(html_marker):
+                html_output = html_output.replace(html_marker, "").replace(code_marker, "").strip()
+            elif html_output.startswith(code_marker):
+                html_output = html_output.replace(code_marker, "").strip()
             
             return html_output
-
             
     except Exception as e:
         st.error(f"❌ Error: {str(e)}")
