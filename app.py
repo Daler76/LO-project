@@ -64,14 +64,14 @@ SYSTEM_PROMPT = """**ROLE:** You are a Goal-to-Task Conversion Assistant special
 
 
 #def get_api_key():
-    """Get API key from environment variable or user input"""
+#    """Get API key from environment variable or user input"""
     # Try to get from environment variable (for deployment)
-    api_key = os.getenv("OPENAI_API_KEY")
+#    api_key = os.getenv("OPENAI_API_KEY")
     
   #  if not api_key:
         # If not in environment, check session state
-        if "api_key" in st.session_state and st.session_state.api_key:
-            api_key = st.session_state.api_key
+   #     if "api_key" in st.session_state and st.session_state.api_key:
+     #       api_key = st.session_state.api_key
     
   #  return api_key
 
