@@ -178,12 +178,22 @@ def main():
         # About section
         st.header("ℹ️ About")
         st.markdown("""
-        This app uses OpenAI's GPT-4 to break down your goals into:
-        - 3-5 manageable phases
-        - Specific actionable tasks
-        - Realistic timelines
-        - Beautiful HTML output
+         This app uses OpenAI's GPT-4 to break down your goals into:
+          - 3-5 manageable phases
+          - Specific actionable tasks
+          - Realistic timelines
+          - Beautiful HTML output
+
+        🔒 API key is securely managed via Streamlit secrets.
         """)
+
+       # st.markdown("""
+     #   This app uses OpenAI's GPT-4 to break down your goals into:
+     #   - 3-5 manageable phases
+    #    - Specific actionable tasks
+    #    - Realistic timelines
+     #   - Beautiful HTML output
+     #   """)
         
         st.markdown("---")
         
@@ -242,9 +252,12 @@ def main():
     if generate_clicked:
         api_key = get_api_key()
         
-        if not api_key:
-            st.error("⚠️ Please enter your OpenAI API key in the sidebar!")
-            st.info("Get your API key at: https://platform.openai.com/api-keys")
+       # if not api_key:
+        #    st.error("⚠️ Please enter your OpenAI API key in the sidebar!")
+        #    st.info("Get your API key at: https://platform.openai.com/api-keys")
+    if not api_key:
+        st.error("⚠️ API key configuration error. Please contact the app administrator.")
+
         elif not user_goal.strip():
             st.warning("⚠️ Please enter a goal!")
         else:
