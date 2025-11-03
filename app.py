@@ -90,12 +90,15 @@ def convert_goal_to_tasks(api_key: str, user_goal: str) -> str:
             
             html_output = response.choices[0].message.content
             
-            # Clean up any markdown code blocks if present
-            backticks_html = "```
-            backticks = "```"
-            
-            if html_output.startswith(backticks_html):
-                html_output = html_output.replace(backticks_html, "").replace(backticks, "").strip()
+# Clean up any markdown code blocks if present
+html_marker = r"```
+code_marker = r"```"
+
+if html_output.startswith(html_marker):
+    html_output = html_output.replace(html_marker, "").replace(code_marker, "").strip()
+elif html_output.startswith(code_marker):
+    html_output = html_output.replace(code_marker, "").strip()
+
             elif html_output.startswith(backticks):
                 html_output = html_output.replace(backticks, "").strip()
             
